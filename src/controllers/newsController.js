@@ -35,6 +35,7 @@ const updateNews = async (req, res) => {
         await News.update(id, updatedFields);
         res.status(200).json(updatedFields);
     } catch (error) {
+        console.log(error)
         res.status(500).json({ message: 'Server error' });
     }
 };
