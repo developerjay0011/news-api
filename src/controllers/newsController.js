@@ -156,7 +156,7 @@ const updateNews = async (req, res) => {
         //     return res.status(404).json({ message: 'News not found' });
         // }
 
-        const updatedFields = { ...existingNews, ...fields };
+        const updatedFields = { ...fields };
         await News.update(id, updatedFields);
         res.status(200).json(updatedFields);
     } catch (error) {
