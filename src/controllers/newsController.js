@@ -133,7 +133,7 @@ const createNews = async (req, res) => {
         res.status(200).json(news);
     } catch (error) {
         console.error("Error:", error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: 'Server error', error: error });
     }
 };
 
@@ -161,7 +161,7 @@ const updateNews = async (req, res) => {
         res.status(200).json(updatedFields);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: 'Server error', error: error });
     }
 };
 
@@ -172,7 +172,7 @@ const deleteNews = async (req, res) => {
         await News.delete(id);
         res.json({ message: 'News deleted successfully' });
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: 'Server error', error: error });
     }
 };
 
@@ -183,7 +183,7 @@ const setNewsStatus = async (req, res) => {
         await News.setStatus(id, status);
         res.json({ message: `News ${status ? 'enabled' : 'disabled'} successfully` });
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: 'Server error', error: error });
     }
 };
 
@@ -202,7 +202,7 @@ const getAllNews = async (req, res) => {
         }
 
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: 'Server error', error: error });
     }
 };
 
@@ -216,7 +216,7 @@ const getNonExpiredNews = async (req, res) => {
         }));
         res.status(200).json(newsWithImageUrl);
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: 'Server error', error: error });
     }
 };
 
