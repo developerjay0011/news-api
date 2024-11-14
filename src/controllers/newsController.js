@@ -97,7 +97,7 @@
 const News = require('../models/newsModel');
 
 const createNews = async (req, res) => {
-    const { title, description, link, topic, status, expire_date } = req.body;
+    const { title, description, link, topic, type, source, status, expire_date } = req.body;
     const image = req.file ? req.file.filename : null;
     console.log(topic)
     try {
@@ -107,6 +107,8 @@ const createNews = async (req, res) => {
             image,
             link,
             topic: Array.isArray(topic) ? topic : [topic], // Ensure topic is an array
+            type,
+            source,
             status,
             created_at: new Date(),
             expire_date
@@ -126,6 +128,8 @@ const updateNews = async (req, res) => {
     if (req.body.description) fields.description = req.body.description;
     if (req.body.link) fields.link = req.body.link;
     if (req.body.topic) fields.topic = Array.isArray(req.body.topic) ? req.body.topic : [req.body.topic];
+    if (req.body.type) fields.type = req.body.type;
+    if (req.body.source) fields.source = req.body.source;
     if (req.body.expire_date) fields.expire_date = req.body.expire_date;
     if (req.file) fields.image = req.file.filename;
 
