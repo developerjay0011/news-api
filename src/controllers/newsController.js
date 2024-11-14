@@ -107,7 +107,7 @@ const createNews = async (req, res) => {
             description,
             image,
             link,
-            topic: JSON.stringify(topic), // Ensure topic is an array
+            topic: topic, // Ensure topic is an array
             type,
             source,
             status,

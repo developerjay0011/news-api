@@ -17,15 +17,22 @@ class News {
         const values = [];
 
         for (const [key, value] of Object.entries(fields)) {
-            setClauses.push(`${key} = ?`);
-            values.push(value);
+            // If updating topic, convert it to a JSON string
+            if (key === 'topic' && Array.isArray(value)) {
+                setClauses.push(`${key} = ?`);
+                values.push(JSON.stringify(value));
+            } else {
+                setClauses.push(`${key} = ?`);
+                values.push(value);
+            }
         }
 
-        values.push(id); // Ensure ID is added only at the end for WHERE clause
+        values.push(id);
 
-        const query = `UPDATE news_master SET ${setClauses.join(', ')} WHERE id = ?`;
-
-        const [result] = await db.query(query, values);
+        await db.query(
+            `UPDATE news_master SET ${setClauses.join(', ')} WHERE id = ?`,
+            values
+        );
         return { id, ...fields };
     }
 
@@ -39,10 +46,13 @@ class News {
 
     static async findById(id) {
         const [rows] = await db.query('SELECT * FROM news_master WHERE id = ?', [id]);
-        return rows.map(row => ({
-            ...row,
-            topic: typeof row.topic === 'string' ? JSON.parse(row.topic) : row.topic
-        }));
+        if (rows.length > 0) {
+            const news = rows[0];
+            // Parse topic JSON string back into an array
+            news.topic = JSON.parse(news.topic);
+            return news;
+        }
+        return null;
     }
 
     static async findAll() {
