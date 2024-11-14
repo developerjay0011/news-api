@@ -95,11 +95,12 @@
 
 
 const News = require('../models/newsModel');
-
+const admin = require('../config/firebase');
 const createNews = async (req, res) => {
     const { title, description, link, topic, type, source, status, expire_date } = req.body;
     const image = req.file ? req.file.filename : null;
     console.log(topic)
+    const baseUrl = `${req.protocol}://${req.get('host')}/uploads/`;
     try {
         const news = await News.create({
             title,
@@ -113,6 +114,22 @@ const createNews = async (req, res) => {
             created_at: new Date(),
             expire_date
         });
+        // Send push notification to all users
+        const message = {
+            notification: {
+                title: 'New News Added',
+                body: title,
+                image: news.image ? `${baseUrl}${news.image}` : null,
+            },
+            data: {
+                newsId: news.id.toString(),
+                title: title,
+                description: description,
+            },
+            topic: 'news', // Send to all users subscribed to the topic
+        };
+
+        await admin.messaging().send(message);
         res.status(200).json(news);
     } catch (error) {
         console.error("Error:", error);
@@ -172,13 +189,18 @@ const setNewsStatus = async (req, res) => {
 
 const getAllNews = async (req, res) => {
     try {
-        const news = await News.findAll();
-        const baseUrl = `${req.protocol}://${req.get('host')}/uploads/`;
-        const newsWithFullImageUrl = news.map(item => ({
-            ...item,
-            image: item.image ? `${baseUrl}${item.image}` : null
-        }));
-        res.json(newsWithFullImageUrl);
+        try {
+            const news = await News.findAll();
+            const baseUrl = `${req.protocol}://${req.get('host')}/uploads/`;
+            const newsWithFullImageUrl = news.map(item => ({
+                ...item,
+                image: item.image ? `${baseUrl}${item.image}` : null
+            }));
+            res.json(newsWithFullImageUrl);
+        } catch (error) {
+            console.log(error)
+        }
+
     } catch (error) {
         res.status(500).json({ message: 'Server error' });
     }
