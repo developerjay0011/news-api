@@ -144,7 +144,7 @@ const updateNews = async (req, res) => {
     if (req.body.title) fields.title = req.body.title;
     if (req.body.description) fields.description = req.body.description;
     if (req.body.link) fields.link = req.body.link;
-    if (req.body.topic) fields.topic = Array.isArray(req.body.topic) ? req.body.topic : [req.body.topic];
+    if (req.body.topic) fields.topic = JSON.stringify(req.body.topic);
     if (req.body.type) fields.type = req.body.type;
     if (req.body.source) fields.source = req.body.source;
     if (req.body.expire_date) fields.expire_date = req.body.expire_date;
