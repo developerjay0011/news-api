@@ -59,7 +59,12 @@ class News {
         const [rows] = await db.query('SELECT * FROM news_master');
         return rows.map(row => {
             // Parse topic JSON string back into an array
-            row.topic = JSON.parse(row.topic);
+            try {
+                row.topic = JSON.parse(row.topic);
+            } catch (error) {
+                console.log(error)
+            }
+            // row.topic = JSON.parse(row.topic);
             return row;
         });
     }
