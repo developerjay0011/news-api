@@ -46,13 +46,10 @@ class News {
 
     static async findById(id) {
         const [rows] = await db.query('SELECT * FROM news_master WHERE id = ?', [id]);
-        if (rows.length > 0) {
-            const news = rows[0];
-            // Parse topic JSON string back into an array
-            news.topic = JSON.parse(news.topic);
-            return news;
-        }
-        return null;
+        return rows.map(row => ({
+            ...row,
+            topic: typeof row.topic === 'string' ? JSON.parse(row.topic) : row.topic
+        }));
     }
 
     static async findAll() {
