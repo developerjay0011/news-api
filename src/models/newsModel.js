@@ -3,10 +3,10 @@ const db = require('../config/config');
 class News {
     static async create({ title, description, image, link, topic, type, source, status, created_at, expire_date }) {
         // Convert topic array to JSON string for storage
-        // const topicsJSON = JSON.stringify(topic);
+        const topicsJSON = JSON.stringify(topic);
         const [result] = await db.query(
             'INSERT INTO news_master (title, description, image, link, topic, type, source, status, created_at, expire_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [title, description, image, link, topic, type, source, status, created_at, expire_date]
+            [title, description, image, link, topicsJSON, type, source, status, created_at, expire_date]
         );
         const topics = JSON.parse(topic)
         return { id: result.insertId, title, description, image, link, topic: topics, type, source, status, created_at, expire_date };
