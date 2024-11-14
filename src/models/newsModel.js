@@ -17,22 +17,15 @@ class News {
         const values = [];
 
         for (const [key, value] of Object.entries(fields)) {
-            // If updating topic, convert it to a JSON string
-            if (key === 'topic' && Array.isArray(value)) {
-                setClauses.push(`${key} = ?`);
-                values.push(JSON.stringify(value));
-            } else {
-                setClauses.push(`${key} = ?`);
-                values.push(value);
-            }
+            setClauses.push(`${key} = ?`);
+            values.push(value);
         }
 
-        values.push(id);
+        values.push(id); // Ensure ID is added only at the end for WHERE clause
 
-        await db.query(
-            `UPDATE news_master SET ${setClauses.join(', ')} WHERE id = ?`,
-            values
-        );
+        const query = `UPDATE news_master SET ${setClauses.join(', ')} WHERE id = ?`;
+
+        const [result] = await db.query(query, values);
         return { id, ...fields };
     }
 
