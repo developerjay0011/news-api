@@ -95,7 +95,7 @@
 
 
 const News = require('../models/newsModel');
-const admin = require('../config/firebase');
+// const admin = require('../config/firebase');
 const createNews = async (req, res) => {
     const { title, description, link, topic, type, source, status, expire_date } = req.body;
     const image = req.file ? req.file.filename : null;
@@ -115,21 +115,21 @@ const createNews = async (req, res) => {
             expire_date
         });
         // Send push notification to all users
-        const message = {
-            notification: {
-                title: 'New News Added',
-                body: title,
-                image: news.image ? `${baseUrl}${news.image}` : null,
-            },
-            data: {
-                newsId: news.id.toString(),
-                title: title,
-                description: description,
-            },
-            topic: 'news', // Send to all users subscribed to the topic
-        };
+        // const message = {
+        //     notification: {
+        //         title: 'New News Added',
+        //         body: title,
+        //         image: news.image ? `${baseUrl}${news.image}` : null,
+        //     },
+        //     data: {
+        //         newsId: news.id.toString(),
+        //         title: title,
+        //         description: description,
+        //     },
+        //     topic: 'news', // Send to all users subscribed to the topic
+        // };
 
-        await admin.messaging().send(message);
+        // await admin.messaging().send(message);
         res.status(200).json(news);
     } catch (error) {
         console.error("Error:", error);
