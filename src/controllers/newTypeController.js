@@ -1,5 +1,5 @@
 const NewType = require('../models/newTypeModel');
-
+const getImageUrl = require('../utils/helpers')
 const createNewType = async (req, res) => {
     const { name, status } = req.body;
     const image = req.file ? req.file.filename : null;
@@ -60,11 +60,11 @@ const setNewTypeStatus = async (req, res) => {
 const getAllNewTypes = async (req, res) => {
     try {
         const NewTypes = await NewType.findAll();
-        const baseUrl = `${req.protocol}://${req.get('host')}/uploads/`;
-        const NewTypesWithFullImageUrl = NewTypes.map(item => ({
+        const NewTypesWithFullImageUrl = await Promise.all(NewTypes.map(async (item) => ({
             ...item,
-            image: item.image ? `${baseUrl}${item.image}` : null
-        }));
+            image: item.image ? await getImageUrl(item.image) : null
+        }))
+        );
         res.json(NewTypesWithFullImageUrl);
     } catch (error) {
         res.status(500).json({ message: 'Server error' });

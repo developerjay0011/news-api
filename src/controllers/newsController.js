@@ -95,12 +95,12 @@
 
 
 const News = require('../models/newsModel');
+const getImageUrl = require('../utils/helpers');
 // const admin = require('../config/firebase');
 const createNews = async (req, res) => {
     const { title, description, link, topic, type, source, status, expire_date } = req.body;
-    const image = req.file ? req.file.filename : null;
-    console.log(topic)
-    const baseUrl = `${req.protocol}://${req.get('host')}/uploads/`;
+    const image = req.file ? req.file.key : null;
+    console.log(req.file)
     try {
         const news = await News.create({
             title,
@@ -191,11 +191,11 @@ const getAllNews = async (req, res) => {
     try {
         try {
             const news = await News.findAll();
-            const baseUrl = `${req.protocol}://${req.get('host')}/uploads/`;
-            const newsWithFullImageUrl = news.map(item => ({
+            const newsWithFullImageUrl = await Promise.all(news.map(async (item) => ({
                 ...item,
-                image: item.image ? `${baseUrl}${item.image}` : null
-            }));
+                image: item.image ? await getImageUrl(item.image) : null
+            }))
+            );
             res.json(newsWithFullImageUrl);
         } catch (error) {
             console.log(error)
@@ -209,11 +209,12 @@ const getAllNews = async (req, res) => {
 const getNonExpiredNews = async (req, res) => {
     try {
         const news = await News.getNonExpired();
-        const baseUrl = `${req.protocol}://${req.get('host')}/uploads/`;
-        const newsWithImageUrl = news.map(item => ({
-            ...item,
-            image: item.image ? `${baseUrl}${item.image}` : null
-        }));
+        const newsWithImageUrl = await Promise.all(
+            news.map(async (item) => ({
+                ...item,
+                image: item.image ? await getImageUrl(item.image) : null
+            }))
+        );
         res.status(200).json(newsWithImageUrl);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error });

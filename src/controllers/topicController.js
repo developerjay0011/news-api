@@ -1,5 +1,5 @@
 const Topic = require('../models/topicModel');
-
+const getImageUrl = require('../utils/helpers')
 const createTopic = async (req, res) => {
     const { name, status } = req.body;
     const image = req.file ? req.file.filename : null;
@@ -60,15 +60,14 @@ const setTopicStatus = async (req, res) => {
 const getAllTopics = async (req, res) => {
     try {
         const topics = await Topic.findAll();
-        const baseUrl = `${req.protocol}://${req.get('host')}/uploads/`;
-        const topicsWithFullImageUrl = topics.map(item => ({
+        const topicsWithFullImageUrl = await Promise.all(topics.map(async (item) => ({
             ...item,
-            image: item.image ? `${baseUrl}${item.image}` : null
-        }));
+            image: item.image ? await getImageUrl(item.image) : null
+        })));
         res.json(topicsWithFullImageUrl);
     } catch (error) {
         res.status(500).json({ message: 'Server error' });
     }
 };
 
-module.exports = { createTopic, updateTopic, deleteTopic, setTopicStatus,getAllTopics };
+module.exports = { createTopic, updateTopic, deleteTopic, setTopicStatus, getAllTopics };
