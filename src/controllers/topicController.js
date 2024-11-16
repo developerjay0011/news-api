@@ -2,7 +2,7 @@ const Topic = require('../models/topicModel');
 const getImageUrl = require('../utils/helpers')
 const createTopic = async (req, res) => {
     const { name, status } = req.body;
-    const image = req.file ? req.file.filename : null;
+    const image = req.file ? req.file.key : null;
 
     try {
         const topic = await Topic.create({ name, status, image });

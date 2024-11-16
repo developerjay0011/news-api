@@ -2,7 +2,7 @@ const NewType = require('../models/newTypeModel');
 const getImageUrl = require('../utils/helpers')
 const createNewType = async (req, res) => {
     const { name, status } = req.body;
-    const image = req.file ? req.file.filename : null;
+    const image = req.file ? req.file.key : null;
 
     try {
         const newtype = await NewType.create({ name, status, image });
