@@ -66,10 +66,10 @@ const updateNews = async (req, res) => {
     if (req.file) fields.image = req.file.key;
 
     try {
-        const existingNews = await News.findById(id);
-        if (!existingNews) {
-            return res.status(404).json({ message: 'News not found' });
-        }
+        // const existingNews = await News.findById(id);
+        // if (!existingNews) {
+        //     return res.status(404).json({ message: 'News not found' });
+        // }
 
         const updatedFields = { ...fields };
         await News.update(id, updatedFields);
