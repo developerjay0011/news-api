@@ -19,7 +19,7 @@ const updateNewType = async (req, res) => {
 
     if (name) fields.name = name;
     if (status !== undefined) fields.status = status;
-    if (req.file) fields.image = req.file.filename;
+    if (req.file) fields.image = req.file.key;
 
     try {
         const existingNewType = await NewType.findById(id);

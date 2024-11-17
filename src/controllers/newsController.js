@@ -6,7 +6,6 @@ const admin = require('../config/firebase');
 const createNews = async (req, res) => {
     const { title, description, link, topic, type, source, status, expire_date } = req.body;
     const image = req.file ? req.file.key : null;
-    console.log(req.file)
     try {
         const news = await News.create({
             title,
@@ -50,17 +49,27 @@ const updateNews = async (req, res) => {
     if (req.body.title) fields.title = req.body.title;
     if (req.body.description) fields.description = req.body.description;
     if (req.body.link) fields.link = req.body.link;
-    if (req.body.topic) fields.topic = Array.isArray(req.body.topic) ? req.body.topic : [req.body.topic];
+    if (req.body.topic) {
+        if (Array.isArray(req.body.topic)) {
+            fields.topic = req.body.topic
+        } else {
+            try {
+                fields.topic = JSON.parse(req.body.topic)
+            } catch (error) {
+                fields.topic = [req.body.topic]
+            }
+        }
+    }
     if (req.body.type) fields.type = req.body.type;
     if (req.body.source) fields.source = req.body.source;
     if (req.body.expire_date) fields.expire_date = req.body.expire_date;
-    if (req.file) fields.image = req.file.filename;
+    if (req.file) fields.image = req.file.key;
 
     try {
-        // const existingNews = await News.findById(id);
-        // if (!existingNews) {
-        //     return res.status(404).json({ message: 'News not found' });
-        // }
+        const existingNews = await News.findById(id);
+        if (!existingNews) {
+            return res.status(404).json({ message: 'News not found' });
+        }
 
         const updatedFields = { ...fields };
         await News.update(id, updatedFields);
