@@ -4,7 +4,7 @@ const News = require('../models/newsModel');
 const getImageUrl = require('../utils/helpers');
 const admin = require('../config/firebase');
 const createNews = async (req, res) => {
-    const { title, description, link, topic, type, source, status, expire_date } = req.body;
+    const { title, description, link, topic, type, source, status, expire_date, end_trending } = req.body;
     const image = req.file ? req.file.key : null;
     try {
         const news = await News.create({
@@ -17,7 +17,8 @@ const createNews = async (req, res) => {
             source,
             status,
             created_at: new Date(),
-            expire_date
+            expire_date,
+            end_trending
         });
         // Send push notification to all users
         const message = {
@@ -64,6 +65,9 @@ const updateNews = async (req, res) => {
     if (req.body.source) fields.source = req.body.source;
     if (req.body.expire_date) fields.expire_date = req.body.expire_date;
     if (req.file) fields.image = req.file.key;
+    if (req.body.end_trending) fields.image = req.body.end_trending;
+
+
 
     try {
         // const existingNews = await News.findById(id);

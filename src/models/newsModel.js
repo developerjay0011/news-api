@@ -1,15 +1,15 @@
 const db = require('../config/config');
 
 class News {
-    static async create({ title, description, image, link, topic, type, source, status, created_at, expire_date }) {
+    static async create({ title, description, image, link, topic, type, source, status, created_at, expire_date, end_trending }) {
         // Convert topic array to JSON string for storage
         // const topicsJSON = JSON.stringify(topic);
         const [result] = await db.query(
-            'INSERT INTO news_master (title, description, image, link, topic, type, source, status, created_at, expire_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [title, description, image, link, topic, type, source, status, created_at, expire_date]
+            'INSERT INTO news_master (title, description, image, link, topic, type, source, status, created_at, expire_date, end_trending) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [title, description, image, link, topic, type, source, status, created_at, expire_date, end_trending]
         );
         const topics = JSON.parse(topic)
-        return { id: result.insertId, title, description, image, link, topic: topics, type, source, status, created_at, expire_date };
+        return { id: result.insertId, title, description, image, link, topic: topics, type, source, status, created_at, expire_date, end_trending };
     }
 
     static async update(id, fields) {
@@ -56,7 +56,7 @@ class News {
     }
 
     static async findAll() {
-        const [rows] = await db.query('SELECT * FROM news_master');
+        const [rows] = await db.query('SELECT * FROM news_master WHERE expire_date IS NULL OR expire_date > CURRENT_DATE');
         return rows.map(row => ({
             ...row,
             topic: typeof row.topic === 'string' ? JSON.parse(row.topic) : row.topic
@@ -64,7 +64,7 @@ class News {
     }
 
     static async getNonExpired() {
-        const [rows] = await db.query('SELECT * FROM news_master WHERE expire_date IS NULL OR expire_date > CURRENT_DATE');
+        const [rows] = await db.query('SELECT * FROM news_master WHERE end_trending IS NULL OR end_trending > CURRENT_DATE');
         return rows.map(row => ({
             ...row,
             topic: typeof row.topic === 'string' ? JSON.parse(row.topic) : row.topic
