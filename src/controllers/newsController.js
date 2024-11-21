@@ -65,7 +65,7 @@ const updateNews = async (req, res) => {
     if (req.body.source) fields.source = req.body.source;
     if (req.body.expire_date) fields.expire_date = req.body.expire_date;
     if (req.file) fields.image = req.file.key;
-    if (req.body.end_trending) fields.image = req.body.end_trending;
+    if (req.body.end_trending) fields.end_trending = req.body.end_trending;
 
 
 
