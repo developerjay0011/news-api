@@ -63,13 +63,13 @@ const upload = multer({
         },
     }),
     fileFilter: (req, file, cb) => {
-        const filetypes = /jpeg|jpg|png/;
-        const mimetype = filetypes.test(file.mimetype);
-        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-
-        if (mimetype && extname) {
+        // const filetypes = /jpeg|jpg|png/;
+        // const mimetype = filetypes.test(file.mimetype);
+        // const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+        if (file.mimetype.startsWith('image/')) {
             return cb(null, true);
         }
+
         cb(new Error('Only images (jpeg, jpg, png) are allowed!'));
     },
 });
