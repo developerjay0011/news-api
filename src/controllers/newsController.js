@@ -124,6 +124,24 @@ const getAllNews = async (req, res) => {
         res.status(500).json({ message: 'Server error', error: error });
     }
 };
+const getAllNewsForApp = async (req, res) => {
+    try {
+        try {
+            const news = await News.findAllForApp();
+            const newsWithFullImageUrl = await Promise.all(news.map(async (item) => ({
+                ...item,
+                image: item.image ? await getImageUrl(item.image) : null
+            }))
+            );
+            res.json(newsWithFullImageUrl);
+        } catch (error) {
+            console.log(error)
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error });
+    }
+};
 
 const getNonExpiredNews = async (req, res) => {
     try {
@@ -140,4 +158,4 @@ const getNonExpiredNews = async (req, res) => {
     }
 };
 
-module.exports = { createNews, updateNews, deleteNews, setNewsStatus, getAllNews, getNonExpiredNews };
+module.exports = { createNews, updateNews, deleteNews, setNewsStatus, getAllNews, getNonExpiredNews, getAllNewsForApp };

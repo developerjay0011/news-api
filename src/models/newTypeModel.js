@@ -48,6 +48,7 @@ class NewType {
         const [rows] = await db.query('SELECT * FROM newtype_master');
         return rows;
     }
+
 }
 
 module.exports = NewType;

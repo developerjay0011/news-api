@@ -56,6 +56,14 @@ class News {
     }
 
     static async findAll() {
+        const [rows] = await db.query('SELECT * FROM news_master');
+        return rows.map(row => ({
+            ...row,
+            topic: typeof row.topic === 'string' ? JSON.parse(row.topic) : row.topic
+        }));
+    }
+
+    static async findAllForApp() {
         const [rows] = await db.query('SELECT * FROM news_master WHERE expire_date IS NULL OR expire_date > CURRENT_DATE');
         return rows.map(row => ({
             ...row,
